@@ -157,11 +157,6 @@ body {
 #divBurger2:focus,
 #divBurger2:active { background-color: var(--hb-bk-color-hover2); }
 
-#divBurger3 { border: var(--hb-chunk-size-third) solid transparent; }
-#divBurger3:hover,
-#divBurger3:focus,
-#divBurger3:active { border-color: var(--hb-color-darkest); }
-
 #divBurger4 { border: none; }
 #divBurger4:hover,
 #divBurger4:focus,
@@ -170,10 +165,15 @@ body {
 #divBurger4:focus div, /* #divBurger3:hover div,*/
 #divBurger4:active div { filter: none; transition: var(--transition-all); }
 
-#divBurger5 { border: none; }
+#divBurger3 { border: none; }
+#divBurger3:hover,
+#divBurger3:focus,
+#divBurger3:active { background-color: var(--hb-color-darkest); transition: var(--transition-all); }
+#divBurger3:hover div,
+#divBurger3:focus div,
+#divBurger3:active div { background-color: var(--hb-bk-color-hover); transition: var(--transition-all); }
+
+#divBurger5 { border: var(--hb-chunk-size-third) solid transparent; }
 #divBurger5:hover,
 #divBurger5:focus,
-#divBurger5:active { background-color: var(--hb-color-darkest); transition: var(--transition-all); }
-#divBurger5:hover div,
-#divBurger5:focus div,
-#divBurger5:active div { background-color: var(--hb-bk-color-hover); transition: var(--transition-all); }
+#divBurger5:active { border-color: var(--hb-color-darkest); }
