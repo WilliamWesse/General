@@ -89,7 +89,7 @@ body {
    margin: 0;
 }
 
-@supports (display: gridd)
+@supports (display: grid)
 {
    #content ul {
       display: grid;
