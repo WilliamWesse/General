@@ -7,12 +7,8 @@ Various topics
 
 ## About
 
-William Edward (Bill) Wesse
+Bill Wesse
 
-(mailto:wwesse@comcast.net "Email")
-
-(https://github.com/WilliamWesse "Bill Wesse on GitHub")
-
-(https://www.linkedin.com/in/billwesse "Bill Wesse on LinkedIn")
+mailto:wwesse@comcast.net, https://github.com/WilliamWesse, https://www.linkedin.com/in/billwesse
 
 Copyright: © William Edward Wesse 2019
