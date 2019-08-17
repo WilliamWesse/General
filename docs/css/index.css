@@ -24,7 +24,7 @@
    --hb-chunk-size-fourth: .03571em; /* calc(1em / 28); */
    --hb-chunk-size-fifth: .02857em; /* calc(1em / 35); */
    --hb-drop-shadow: drop-shadow(0.07143em 0.07143em 0.04762em var(--hb-bk-color-active));
-   --hb-font-size: 3.5rem;
+   --hb-font-size: 2.5rem;
    --min-height: 30em;
    --min-width: 30em;
    --transition-std: .5s ease-in-out 40ms;
@@ -149,7 +149,7 @@ body {
 #burger4:focus div, /* #burger3:hover div,*/
 #burger4:active div { filter: none; transition: var(--transition-all); }
 
-/* #burger5 { border: var(--hb-chunk-size-third) solid transparent; } */
+#burger5 { border: var(--hb-chunk-size-third) solid transparent; }
 #burger5:hover,
 #burger5:focus,
 #burger5:active { border-color: var(--hb-color-darkest); }
