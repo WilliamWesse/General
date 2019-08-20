@@ -21,7 +21,7 @@ function Initialize()
    UpdateLightness();
    UpdateSaturation();
    UpdateColorPalette(0);
-   //UpdatePaletteStartColor();
+   console.log(new Date(Date.now()).toUTCString());
 }
 
 function GetNumericInput(id, percent, fraction)
@@ -87,12 +87,6 @@ function UpdateColorPalette(hueInDegrees)
       }
    }
    catch (e) { LogError(arguments, e); }
-}
-
-function UpdatePaletteStartColor()
-{
-   var input = document.getElementById(StartColorInputId);
-   UpdateColorPalette(input.value);
 }
 
 function UpdateHue()
