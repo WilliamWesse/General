@@ -137,7 +137,7 @@ function UpdateLightness()
       SelectedLightness = ni[1];
       var color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
       var msg;
-      if (!CONSOLE_DEBUG) {
+      if (CONSOLE_DEBUG) {
          msg = arguments.callee.name + '(' + ni[1] + '%) value: ' + ni[0].value + ' color: ' + color;
          console.log(msg);
       }
