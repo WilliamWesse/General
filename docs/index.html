@@ -9,9 +9,10 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
    <link rel="stylesheet" href="css/index.css">
+   <script src="script/index.js"></script>
    <title>General Topics</title>
 </head>
-<body>
+<body onload="Initialize();" onresize="UpdateSampleColor();">
    <section id="burgers">
       <h1 tabindex="1">Hamburgers <span style="font-size: 75%; font-weight: 500; font-style: italic;">(with a bit of transition)</span></h1>
       <h3>Hover and click to test.</h3>
@@ -22,6 +23,21 @@
          <li><a id="burger4" class="burger" tabindex="4"><div></div><div></div><div></div></a><p>Drop-shadow with background.</p></li>
          <li><a id="burger5" class="burger" tabindex="5"><div></div><div></div><div></div></a><p>Plain with border.</p></li>
       </ul>
+      <div>
+         Color <b>&deg;</b>:
+         <input type="number" placeholder="Degrees" id="colorInputId"
+            name="colorInputId" min="0" max="360" step="5" value="0"
+            class="numinput" onchange="UpdateSampleColor();">
+         <canvas width="32px" height="21px" id="sampleColorId" class="colorCanvas"></canvas>
+         <canvas width="5px" height="5px" id="sampleColorCursorId" class="colorCursor" draggable="true"></canvas>
+         <br><br>
+         Color Start <b>&deg;</b>:
+         <input type="number" placeholder="Degrees" id="startColorInputId"
+            name="startColorInputId" min="0" max="360" step="5" value="0"
+            class="numinput" onchange="UpdatePaletteStartColor();">
+         <br><br>
+      </div>
+      <canvas width="360px" height="100px" id="colorPaletteId" class="colorCanvas"></canvas>
    </section>
 </body>
 </html>

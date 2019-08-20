@@ -10,7 +10,7 @@
    --content-top: .25em;
    --hb-bk-color: #d6eefa;
    --hb-bk-color-active: #5ec9ff;
-   --hb-bk-color-focus: #008cff;
+   --hb-bk-color-focus: hsl(207, 100%, 50%);
    --hb-bk-color-hover: #d6eefa;
    --hb-bk-color-hover2: #91d9fd;
    --hb-color-brightest: #f7f9fa;
@@ -60,6 +60,44 @@ body {
 .san-serif { font-family: Arial, Helvetica, sans-serif, }
 .serif { font-family: 'Times New Roman', Times, serif; }
 
+#colorPaletteId {
+   cursor: crosshair;
+}
+#sampleColorId {
+   border-radius: 0.2em;
+   height: 1.375em;
+   /* display: inline; */
+   position: relative;
+   /* clear: left; */
+   top: calc(.375em + 1px); /* UGLY rough scalar BUGBUG .45em .375em; */
+}
+
+.numinput {
+   width: 6em;
+   height: 1.25em;
+   border-radius: 0.2em;
+   border: 1px solid var(--hb-color-darkest);
+   padding: 0.2em;
+   box-shadow: none; /* negate :not(output):-moz-ui-invalid { box-shadow: 0 0 1.5px 1px red; }*/
+}
+.colorCanvas {
+   border: 1px solid var(--hb-color-darkest);
+}
+.colorCursor {
+   cursor: grab;
+   border-radius: 5px;
+   border: 1px solid var(--hb-color-darkest);
+   position: absolute;
+   z-index: 1;
+   /* left: 2em;
+   top: 30em; */
+   /* display: inline-block; */
+}
+.colorCursor:active,
+.colorCursor:focus {
+   cursor: grabbing;
+}
+
 #burgers {
    border: 0.25em solid var(--hb-color-darkest);
    border-radius: 1em;
@@ -75,7 +113,6 @@ body {
    line-height: 1em;
    /* font-size: 1.25em; */
    list-style: none;
-
 }
 
 #burgers ul li {
@@ -88,7 +125,7 @@ body {
    box-sizing: content-box;
    background-color: #ffedd4;
    width: 9.667em; /* arbitrary */
-   height: calc(var(--hb-font-size) + 3em); /* 3em arbitrary single-wrap text description */
+   height: calc(var(--hb-font-size) + 2.75em); /* 3em arbitrary single-wrap text description */
 }
 #burgers ul li a {
    hyphens: none;
