@@ -7,7 +7,8 @@ var ColorDivId ='colorDivId';
 var HueInputId = 'hueInputId';
 var ColorPaletteId = 'colorPaletteId'; /* canvas */
 var PaletteCursorId = 'paletteCursorId';
-var InputBigIncrement = 15;
+var PlayBtnDegreeIncrement = 15;
+var PlayBtnPercentIncrement = 5;
 var SelectedHue = 0;
 var SelectedLightness = 0;
 var SelectedSaturation = 100;
@@ -81,8 +82,9 @@ function IncrementInput(id, increment, percent)
    try {
       var ni = GetNumericInput(id, percent, false);
       var val = ni[1];
-      if (increment) val += InputBigIncrement;
-      else val -= InputBigIncrement;
+      var inc = id == HueInputId ? PlayBtnDegreeIncrement : PlayBtnPercentIncrement;
+      if (increment) val += inc;
+      else val -= inc;
       val = SanitizeNumberInput(val, percent, false);
       var msg;
       if (!CONSOLE_DEBUG) {
