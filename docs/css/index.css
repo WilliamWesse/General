@@ -88,6 +88,23 @@ body {
    height: calc(1.25em + 1px);
    z-index: 1;
 }
+.playButton {
+   display: inline-block;
+   padding: 0;
+   width: 1.75em;
+   font-weight: 525;
+   text-align: center;
+}
+.inputLabelSpan {
+   display: inline-block;
+   width: 7.5em;
+}
+#colorDivId {
+   margin: 0;
+   height: 21.3333px;
+   width: 5em;
+   float: right;
+}
 #colorPaletteId {
    border: 1px solid var(--hb-color-darkest);
 }
@@ -106,6 +123,9 @@ body {
 }
 #colors {
    display: inline-block;
+}
+#colors div {
+   display: block;
 }
 #colors button {
    margin-bottom: 0.25em;

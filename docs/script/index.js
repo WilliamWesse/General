@@ -3,7 +3,7 @@ var LightnessInputId = 'lightnessInputId';
 var SaturationDivId = 'saturationDivId';
 var SaturationInputId = 'saturationInputId';
 var StartColorInputId = 'startColorInputId';
-var HueDivId ='hueDivId';
+var ColorDivId ='colorDivId';
 var HueInputId = 'hueInputId';
 var ColorPaletteId = 'colorPaletteId'; /* canvas */
 var PaletteCursorId = 'paletteCursorId';
@@ -76,6 +76,31 @@ function GetOffset(element)
    return [left, top];
 }
 
+function IncrementInput(id, increment, percent)
+{
+   try {
+      var ni = GetNumericInput(id, percent, false);
+      var val = ni[1];
+      if (increment) val += InputBigIncrement;
+      else val -= InputBigIncrement;
+      val = SanitizeNumberInput(val, percent, false);
+      var msg;
+      if (!CONSOLE_DEBUG) {
+         msg = arguments.callee.name + '(' + id + ') ' + ni[1] + '% value: ' + val;
+         console.log(msg);
+      }
+      ni[0].value = val;
+      switch (id)
+      {
+         case HueInputId: UpdateHue(); break;
+         case SaturationInputId: UpdateSaturation(); break;
+         case LightnessInputId: UpdateLightness(); break;
+      }
+         // UpdateHue();
+   }
+   catch (e) { LogError(arguments, e); }
+}
+
 function UpdateColorPalette(hueInDegrees)
 {
    try {
@@ -106,7 +131,7 @@ function UpdateHue()
          msg = arguments.callee.name + '(' + ni[1] + '°) ' + color;
          console.log(msg);
       }
-      var element = document.getElementById(HueDivId);
+      var element = document.getElementById(ColorDivId);
       element.style.backgroundColor = color;
 
       var palette = document.getElementById(ColorPaletteId);
@@ -167,14 +192,34 @@ function LogError(args, e)
    console.log(e);
 }
 
-function Reset()
+function Reset(id)
 {
-   var element = document.getElementById(SaturationInputId);
-   element.value = 100;
-   UpdateSaturation();
-   element = document.getElementById(LightnessInputId);
-   element.value = 50;
-   UpdateLightness();
+   var element = document.getElementById(id);
+   switch (id)
+   {
+      case HueInputId: element.value = 0; UpdateHue(); break;
+      case SaturationInputId: element.value = 100; UpdateSaturation(); break;
+      case LightnessInputId: element.value = 50; UpdateLightness(); break;
+   }
+}
+
+function ResetToStop(id, end)
+{
+   var element = document.getElementById(id);
+   switch (id)
+   {
+      case HueInputId: element.value = end ? 359 : 0; UpdateHue(); break;
+      case SaturationInputId: element.value = end ? 1000 : 0; UpdateSaturation(); break;
+      case LightnessInputId: element.value = end ? 100 : 0; UpdateLightness(); break;
+   }
+}
+
+function SanitizeNumberInput(value, percent, fraction)
+{
+   var modulus = percent ? 100 : 360;
+   var result = Math.abs(value) % modulus;
+   if (value < 0) result = modulus - result;
+   return fraction ? result/modulus : result;
 }
 
 function SanitizeDegrees(degree, fraction)
@@ -208,6 +253,7 @@ function CursorDragOver(event)
 function CursorDragStart(event)
 {
    var element = document.getElementById(PaletteCursorId);
+   //element.style.cursor = 'cell';
    if (CONSOLE_DEBUG) console.log(arguments.callee.name + ' left: ' + event.offsetX);
 }
 

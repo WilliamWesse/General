@@ -14,8 +14,8 @@
 </head>
 <body onload="Initialize();" onresize="UpdateHue();">
    <section id="burgers">
-      <h1 tabindex="1">Hamburgers <span style="font-size: 75%; font-weight: 500; font-style: italic;">(with a bit of transition)</span></h1>
-      <h3>Hover and click to test.</h3>
+      <h1 tabindex="1">Hamburgers
+         <span style="font-size: 75%; font-weight: 500;"> - Hover &amp; click <i>(has transitions).</i></span></h1>
       <ul class="mono-sans-serif">
          <li><a id="burger1" class="burger" tabindex="2"><div></div><div></div><div></div></a><p>Plain with drop-shadow.</p></li>
          <li><a id="burger2" class="burger" tabindex="3"><div></div><div></div><div></div></a><p>Plain with background.</p></li>
@@ -26,27 +26,39 @@
    </section>
    <br>
    <section id="colors" tabindex="6">
-      <h1>Colors</h1>
-      <div id="hueDivId" class="colorDiv"></div>
-      <button onclick="Reset();">Reset</button>
-      <br>
+      <h1>Color: <div id="colorDivId" class="colorDiv"></div></h1>
       <div>
+         <button class="playButton" onclick="Reset('hueInputId');"><b>&#8630;</b></button> &#8226;
+         <button class="playButton" onclick="ResetToStop('hueInputId', false);">&#9198;</button>
+         <button class="playButton" onclick="IncrementInput('hueInputId', false, false);">&#9204;</button>
+         <button class="playButton" onclick="IncrementInput('hueInputId', true, false);">&#9205;</button>
+         <button class="playButton" onclick="ResetToStop('hueInputId', true);">&#9197;</button> &#9474;
          <input type="number" placeholder="Degrees" id="hueInputId"
             name="hueInputId" min="0" max="360" step="1" value="0"
             class="numinput" onchange="UpdateHue();">
-         Hue <b>&deg;</b>
+         <span class="inputLabelSpan">&nbsp;Hue <b>&deg;</b></span>
       </div>
       <div>
+         <button class="playButton" onclick="Reset('saturationInputId');"><b>&#8630;</b></button> &#8226;
+         <button class="playButton" onclick="ResetToStop('saturationInputId', false);">&#9198;</button>
+         <button class="playButton" onclick="IncrementInput('saturationInputId', false, false);">&#9204;</button>
+         <button class="playButton" onclick="IncrementInput('saturationInputId', true, false);">&#9205;</button>
+         <button class="playButton" onclick="ResetToStop('saturationInputId', true);" >&#9197;</button> &#9474;
          <input type="number" placeholder="Percent" id="saturationInputId"
             name="saturationInputId" min="0" max="100" step="1" value="100"
             class="numinput" onchange="UpdateSaturation();">
-         Saturation %
+         <span class="inputLabelSpan">&nbsp;Saturation %</span>
       </div>
       <div>
+         <button class="playButton" onclick="Reset('lightnessInputId');"><b>&#8630;</b></button> &#8226;
+         <button class="playButton" onclick="ResetToStop('lightnessInputId', false);">&#9198;</button>
+         <button class="playButton" onclick="IncrementInput('lightnessInputId', false, false);">&#9204;</button>
+         <button class="playButton" onclick="IncrementInput('lightnessInputId', true, false);">&#9205;</button>
+         <button class="playButton" onclick="ResetToStop('lightnessInputId', true);">&#9197;</button> &#9474;
          <input type="number" placeholder="Percent" id="lightnessInputId"
             name="lightnessInputId" min="0" max="100" step="1" value="50"
             class="numinput" onchange="UpdateLightness();">
-         Lightness %<br>
+         <span class="inputLabelSpan">&nbsp;Lightness %</span>
       </div>
       <a id="paletteCursorId" class="colorCursor" href="#"></a>
       <canvas width="360px" height="21.3333px" id="colorPaletteId" class="colorCanvas"></canvas>
