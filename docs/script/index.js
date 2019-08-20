@@ -22,6 +22,11 @@ function Initialize()
    UpdateSaturation();
    UpdateColorPalette(0);
    console.log(new Date(Date.now()).toUTCString());
+   var element = document.getElementById(PaletteCursorId);
+
+   document.addEventListener('dragstart', CursorDragStart);
+   document.addEventListener('dragend', EndCursorDrag);
+   document.addEventListener('dragover', CursorDragOver);
 }
 
 function GetNumericInput(id, percent, fraction)
@@ -186,6 +191,24 @@ function SanitizePercent(percent, fraction)
    if (percent == 100) mod = percent;
    else if (percent < 0) mod = 100 - mod;
    return fraction ? mod/100 : mod;
+}
+
+function EndCursorDrag(event)
+{
+   var element = document.getElementById(PaletteCursorId);
+   if (CONSOLE_DEBUG) console.log(arguments.callee.name + ' left: ' + event.offsetX);
+}
+
+function CursorDragOver(event)
+{
+   var element = document.getElementById(PaletteCursorId);
+   if (CONSOLE_DEBUG) console.log(arguments.callee.name + ' left: ' + event.offsetX);
+}
+
+function CursorDragStart(event)
+{
+   var element = document.getElementById(PaletteCursorId);
+   if (CONSOLE_DEBUG) console.log(arguments.callee.name + ' left: ' + event.offsetX);
 }
 
 function StyleRgbFromHsl(h, s, l)

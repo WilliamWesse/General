@@ -79,8 +79,6 @@ body {
 .colorCursor {
    cursor: grab;
    margin-right: 0.25em;
-   /* border-radius: 3px; */
-   border-color: var(--hb-color-darkest);
    border: 1px solid var(--hb-color-darkest);
    border-top: 0;
    border-bottom: 0;
@@ -97,17 +95,20 @@ body {
 .colorCursor:focus {
    cursor: grabbing;
 }
-#burgers button {
-   margin-bottom: 0.25em;
-}
-#burgers {
+#burgers, #colors {
    border: 0.25em solid var(--hb-color-darkest);
    border-radius: 1em;
-   padding: 1em;
+   padding: 0 1em 1em 1em;
    box-sizing: border-box;
    color: var(--content-color);
    background-color: transparent;
    font-size: 1em;
+}
+#colors {
+   display: inline-block;
+}
+#colors button {
+   margin-bottom: 0.25em;
 }
 /* intentionally specific css */
 #burgers ul {
@@ -138,7 +139,6 @@ body {
 #burgers ul li:last-of-type {
    display: inherit;
 }
-
 .burger {
    display: inline-block;
    outline: none;
