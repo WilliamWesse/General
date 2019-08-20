@@ -57,47 +57,49 @@ body {
 .code { font-family: Consolas, monospace; }
 .mono { font-family: monospace; }
 .mono-serif { font-family: 'Courier New', Courier; }
-.san-serif { font-family: Arial, Helvetica, sans-serif, }
+.san-serif { font-family: Arial, Helvetica, sans-serif; }
 .serif { font-family: 'Times New Roman', Times, serif; }
 
-#colorPaletteId {
-   cursor: crosshair;
-}
-#sampleColorId {
-   border-radius: 0.2em;
-   height: 1.375em;
-   /* display: inline; */
-   position: relative;
-   /* clear: left; */
-   top: calc(.375em + 1px); /* UGLY rough scalar BUGBUG .45em .375em; */
-}
-
 .numinput {
-   width: 6em;
+   border: 1px solid var(--hb-color-darkest);
+   margin-bottom: 0.25em;
+   background-color: transparent;
+   width: 5em;
    height: 1.25em;
-   border-radius: 0.2em;
-   border: 1px solid var(--hb-color-darkest);
-   padding: 0.2em;
-   box-shadow: none; /* negate :not(output):-moz-ui-invalid { box-shadow: 0 0 1.5px 1px red; }*/
 }
-.colorCanvas {
+.colorDiv {
+   margin: 0;
+   margin-right: 0.25em;
    border: 1px solid var(--hb-color-darkest);
+   padding: 0;
+   width: 4.3em;
+   height: calc(1.25em - 1px);
+   float: left;
 }
 .colorCursor {
    cursor: grab;
-   border-radius: 5px;
+   margin-right: 0.25em;
+   /* border-radius: 3px; */
+   border-color: var(--hb-color-darkest);
    border: 1px solid var(--hb-color-darkest);
+   border-top: 0;
+   border-bottom: 0;
+   text-decoration: none;
    position: absolute;
+   width: 1px;
+   height: calc(1.25em + 1px);
    z-index: 1;
-   /* left: 2em;
-   top: 30em; */
-   /* display: inline-block; */
+}
+#colorPaletteId {
+   border: 1px solid var(--hb-color-darkest);
 }
 .colorCursor:active,
 .colorCursor:focus {
    cursor: grabbing;
 }
-
+#burgers button {
+   margin-bottom: 0.25em;
+}
 #burgers {
    border: 0.25em solid var(--hb-color-darkest);
    border-radius: 1em;

@@ -12,7 +12,7 @@
    <script src="script/index.js"></script>
    <title>General Topics</title>
 </head>
-<body onload="Initialize();" onresize="UpdateSampleColor();">
+<body onload="Initialize();" onresize="UpdateHue();">
    <section id="burgers">
       <h1 tabindex="1">Hamburgers <span style="font-size: 75%; font-weight: 500; font-style: italic;">(with a bit of transition)</span></h1>
       <h3>Hover and click to test.</h3>
@@ -23,21 +23,38 @@
          <li><a id="burger4" class="burger" tabindex="4"><div></div><div></div><div></div></a><p>Drop-shadow with background.</p></li>
          <li><a id="burger5" class="burger" tabindex="5"><div></div><div></div><div></div></a><p>Plain with border.</p></li>
       </ul>
+      <br><br>
+      <div id="hueDivId" class="colorDiv"></div>
+      <button onclick="Reset();">Reset</button>
+      <br>
       <div>
-         Color <b>&deg;</b>:
-         <input type="number" placeholder="Degrees" id="colorInputId"
-            name="colorInputId" min="0" max="360" step="5" value="0"
-            class="numinput" onchange="UpdateSampleColor();">
-         <canvas width="32px" height="21px" id="sampleColorId" class="colorCanvas"></canvas>
-         <canvas width="5px" height="5px" id="sampleColorCursorId" class="colorCursor" draggable="true"></canvas>
-         <br><br>
-         Color Start <b>&deg;</b>:
-         <input type="number" placeholder="Degrees" id="startColorInputId"
-            name="startColorInputId" min="0" max="360" step="5" value="0"
-            class="numinput" onchange="UpdatePaletteStartColor();">
-         <br><br>
+         <input type="number" placeholder="Degrees" id="hueInputId"
+            name="hueInputId" min="0" max="360" step="1" value="0"
+            class="numinput" onchange="UpdateHue();">
+         Hue <b>&deg;</b>
       </div>
-      <canvas width="360px" height="100px" id="colorPaletteId" class="colorCanvas"></canvas>
+      <div>
+         <input type="number" placeholder="Percent" id="saturationInputId"
+            name="saturationInputId" min="0" max="100" step="1" value="100"
+            class="numinput" onchange="UpdateSaturation();">
+         Saturation %
+      </div>
+      <div>
+         <input type="number" placeholder="Percent" id="lightnessInputId"
+            name="lightnessInputId" min="0" max="100" step="1" value="50"
+            class="numinput" onchange="UpdateLightness();">
+         Lightness %<br>
+      </div>
+      <a id="paletteCursorId" class="colorCursor" href="#"></a>
+      <canvas width="360px" height="21.3333px" id="colorPaletteId" class="colorCanvas"></canvas>
+      <!--
+      <div>
+         <input type="number" placeholder="Degrees" id="startColorInputId"
+            name="startColorInputId" min="0" max="360" step="1" value="0"
+            class="numinput" onchange="UpdatePaletteStartColor();">
+         Hue Rotation <b>&deg;</b>
+      </div>
+      -->
    </section>
 </body>
-</html>
+</html> 

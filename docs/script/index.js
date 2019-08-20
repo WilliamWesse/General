@@ -1,26 +1,59 @@
+var LightnessDivId = 'lightnessDivId';
+var LightnessInputId = 'lightnessInputId';
+var SaturationDivId = 'saturationDivId';
+var SaturationInputId = 'saturationInputId';
 var StartColorInputId = 'startColorInputId';
-var ColorInputId = 'colorInputId';
-var SampleColorId='sampleColorId'; /* canvas */
+var HueDivId ='hueDivId';
+var HueInputId = 'hueInputId';
 var ColorPaletteId = 'colorPaletteId'; /* canvas */
-var SampleColorCursorId = 'sampleColorCursorId';
+var PaletteCursorId = 'paletteCursorId';
 var InputBigIncrement = 15;
-var SelectedColor = '#000000';
+var SelectedHue = 0;
+var SelectedLightness = 0;
+var SelectedSaturation = 100;
 var GoldenRatio = 1.618;
 var CONSOLE_DEBUG = false;
 var DEBUG_INCREMENT = 15;
 
 function Initialize()
 {
-   UpdateSampleColor();
-   UpdatePaletteStartColor();
+   UpdateHue();
+   UpdateLightness();
+   UpdateSaturation();
+   UpdateColorPalette(0);
+   //UpdatePaletteStartColor();
 }
 
-function GetColorSelection()
+function GetNumericInput(id, percent, fraction)
 {
-   var input = document.getElementById(ColorInputId);
-   SelectedColor = SanitizeDegrees(input.value, false);
-   if (input.value != SelectedColor) input.value = SelectedColor;
-   return SelectedColor;
+   var element = null;
+   var value = 0;
+   try {
+      element = document.getElementById(id);
+      if (element == null || element.tagName.toLowerCase() != 'input' ||
+         element.type != 'number') {
+         if (CONSOLE_DEBUG) {
+            var msg = arguments.callee.name + '(' + id + ',' + percent + ',' + fraction +') invalid';
+            if (element.tagName.toLowerCase() != 'input')
+               msg += ' element: ' + element.tagName;
+            if (element.type != 'number')
+               msg += ' type: ' + element.type;
+            console.log(msg + element.tagName + ' ' + element.type);
+         }
+      }
+      else {
+         if (percent) value = SanitizePercent(element.value, fraction);
+         else value = SanitizeDegrees(element.value, fraction);
+         var val = percent ? SanitizePercent(element.value, false) : SanitizeDegrees(element.value, false);
+         if (element.value != val) element.value = val;
+      }
+      return [element, value];
+   }
+   catch (e) { LogError(arguments, e); }
+   if (CONSOLE_DEBUG)
+      console.log(arguments.callee.name +
+         '(' + id + ',' + percent + ',' + fraction + ') value: ' + element.value + ' -> ' + value);
+   return [element, value];
 }
 
 function GetOffset(element)
@@ -45,7 +78,7 @@ function UpdateColorPalette(hueInDegrees)
       var ctx = canvas.getContext('2d');
       hueInDegrees = SanitizeDegrees(hueInDegrees, false);
       if (CONSOLE_DEBUG) console.log(arguments.callee.name +
-         '(' + hueInDegrees + ' °)' +
+         '(' + hueInDegrees + '°)' +
          canvas.clientWidth + ' x ' + canvas.clientHeight);
       for (var i = 0; i < canvas.clientWidth; i++) {
          var color = StyleRgbFromHue(i+hueInDegrees);
@@ -53,9 +86,7 @@ function UpdateColorPalette(hueInDegrees)
          ctx.fillRect(i,0,1,canvas.clientHeight);
       }
    }
-   catch (e) {
-      if (CONSOLE_DEBUG) console.log(arguments.callee.name + ': ' + e);
-   }
+   catch (e) { LogError(arguments, e); }
 }
 
 function UpdatePaletteStartColor()
@@ -64,53 +95,113 @@ function UpdatePaletteStartColor()
    UpdateColorPalette(input.value);
 }
 
-function UpdateSampleColor()
+function UpdateHue()
 {
    try {
-      var canvas = document.getElementById(SampleColorId);
-      var value = GetColorSelection();
-      var ctx = canvas.getContext('2d');
-      var msg;
+      var ni = GetNumericInput(HueInputId, false, false);
+      SelectedHue = ni[1];
+      var color = StyleRgbFromHue(ni[1]);
+      color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
+      var msg = '';
       if (CONSOLE_DEBUG) {
-         msg = arguments.callee.name + '(' + value + '°)';
+         msg = arguments.callee.name + '(' + ni[1] + '°) ' + color;
          console.log(msg);
       }
-      var color = StyleRgbFromHue(value);
-      ctx.fillStyle = color;
-      ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
+      var element = document.getElementById(HueDivId);
+      element.style.backgroundColor = color;
 
       var palette = document.getElementById(ColorPaletteId);
-      var cursor = document.getElementById(SampleColorCursorId);
+      var cursor = document.getElementById(PaletteCursorId);
       var offset = GetOffset(palette);
       var nudge = (cursor.offsetWidth >> 1) - 1;
-      var newx = offset[0] + parseInt(value) - nudge;
-      var newy = offset[1] - nudge;
-      cursor.style.left = newx + 'px';
-      cursor.style.top = newy + 'px';
+      var newx = offset[0] + ni[1] - nudge; /* + parseInt(value) */
+      if (CONSOLE_DEBUG)
+         console.log(msg + ' palette: ' + offset[0] + ' x ' + offset[1]);
+      var newy = offset[1] + 1;/* (palette.clientHeight >> 1) - nudge; */
+      cursor.style.borderColor =
+         StyleRgbFromHue(SanitizeDegrees(ni[1] + 180, false));
       if (CONSOLE_DEBUG) console.log(msg +
          ' palette: ' + offset[0] + ' x ' + offset[1] +
-         ' cursor: ' + newx + ' x ' + newy);
+         ' cursor: ' + newx + ' x ' + newy +
+         ' border: ' + cursor.style.borderColor);
+      cursor.style.left = newx + 'px';
+      cursor.style.top = newy + 'px';
    }
-   catch (e) {
-      if (CONSOLE_DEBUG) console.log(arguments.callee.name + ': ' + e);
+   catch (e) { LogError(arguments, e); }
+}
+
+function UpdateLightness()
+{
+   try {
+      var ni = GetNumericInput(LightnessInputId, true, false);
+      SelectedLightness = ni[1];
+      var color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
+      var msg;
+      if (!CONSOLE_DEBUG) {
+         msg = arguments.callee.name + '(' + ni[1] + '%) value: ' + ni[0].value + ' color: ' + color;
+         console.log(msg);
+      }
+      UpdateHue();
    }
+   catch (e) { LogError(arguments, e); }
+}
+
+function UpdateSaturation()
+{
+   try {
+      var ni = GetNumericInput(SaturationInputId, true, false);
+      SelectedSaturation = ni[1];
+      color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
+      var msg;
+      if (CONSOLE_DEBUG) {
+         msg = arguments.callee.name + '(' + ni[1] + '%) value: ' + (ni[0].value * 2.5) + ' color: ' + color ;
+         console.log(msg);
+      }
+      UpdateHue();
+   }
+   catch (e) { LogError(arguments, e); }
+}
+
+function LogError(args, e)
+{
+   console.log(args.callee.name + ' ' + e);
+   console.log(e);
+}
+
+function Reset()
+{
+   var element = document.getElementById(SaturationInputId);
+   element.value = 100;
+   UpdateSaturation();
+   element = document.getElementById(LightnessInputId);
+   element.value = 50;
+   UpdateLightness();
 }
 
 function SanitizeDegrees(degree, fraction)
 {
    var mod = Math.abs(degree) % 360;
+   // if (degree == 360) mod = degree; else
    if (degree < 0) mod = 360 - mod;
    return fraction ? mod/360 : mod;
 }
 
+function SanitizePercent(percent, fraction)
+{
+   var mod = Math.abs(percent) % 100;
+   if (percent == 100) mod = percent;
+   else if (percent < 0) mod = 100 - mod;
+   return fraction ? mod/100 : mod;
+}
+
 function StyleRgbFromHsl(h, s, l)
 {
-   var rgb = hslToRgb(h,s,l);
+   var rgb = hslToRgb(SanitizeDegrees(h, true),s,l);
    var val = "#";
    for (var i = 0; i < rgb.length; i++)
       val += rgb[i] < 16 ? '0' + rgb[i].toString(16) : rgb[i].toString(16);
    if (CONSOLE_DEBUG && (h % DEBUG_INCREMENT)==0)
-      console.log(arguments.callee.name + '(' + hueInDegrees + '°) rgb: ' + val);
+      console.log(arguments.callee.name + '(' + h + '°) rgb: ' + val);
    return val;
 }
 
