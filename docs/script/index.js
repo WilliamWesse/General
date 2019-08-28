@@ -1,3 +1,8 @@
+/* jshint esversion: 6 */
+var DefaultHue = 0;
+var DefaultSaturation = 100;
+var DefaultLightness = 50;
+
 var LightnessDivId = 'lightnessDivId';
 var LightnessInputId = 'lightnessInputId';
 var SaturationDivId = 'saturationDivId';
@@ -16,18 +21,96 @@ var GoldenRatio = 1.618;
 var CONSOLE_DEBUG = false;
 var DEBUG_INCREMENT = 15;
 
+var HslDimension =  { Hue: 0, Saturation: 1, Lightness: 2 };
+var HslDimensionCtrlType = { None: 0, Percent: 1, Degrees: 2 };
+
+class HslDimensionCtrl {
+   constructor(controller, id, dimension, defaultValue) {
+
+      this.Controller = controller; /* implements HslDimensionCtrl for Hue, Saturation, Lightness */
+      this.Id = id;
+      this.Type = HslDimensionCtrlType.None;
+      this.Dimension = dimension;
+      this.DefaultValue = defaultValue;
+      switch (dimension)
+      {
+         case HslDimension.Hue: this.Type = HslDimensionCtrlType.Degrees; break;
+         case HslDimension.Saturation:
+         case HslDimension.Lightness: this.Type = HslDimensionCtrlType.Percent; break;
+         default: throw 'Invalid Color Control Dimension: ' + dimension;
+      }
+      this.Control = document.getElementById(id);
+      this.Valid = this.Control != null && this.Control.tagName.toLowerCase() == 'button';
+      this.IsHue = this.Valid && this.Dimension == HslDimension.Hue;
+      this.IsLightness = this.Valid && this.Dimension == HslDimension.Lightness;
+      this.IsPercent = this.Valid && this.Type == HslDimensionCtrlType.Percent;
+      this.IsSaturation = this.Valid && this.Dimension == HslDimension.Saturation;
+
+      if (this.IsPercent) {
+         // BUGBUG TODO implements Controller. This code uses existing globals.
+         this.OnClick = function(event) {
+            function UpdatePercentage(saturation)
+            {
+               try {
+                  var ni = GetNumericInput(saturation ? SaturationInputId : LightnessInputId, true, false);
+                  if (saturation) SelectedSaturation = ni[1];
+                  else SelectedLightness = ni[1];
+                  var color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
+                  var msg;
+                  if (CONSOLE_DEBUG) {
+/* jshint ignore:start */
+                     msg = arguments.callee.name + '(' + ni[1] + '%) ' +
+                        (saturation ? 'saturation' : 'lightness') +
+                        ' value: ' + ni[0].value + ' color: ' + color;
+/* jshint ignore:end */
+                     console.log(msg);
+                  }
+                  return UpdateHue();
+               }
+               catch (e) { LogError(arguments, e); }
+               return false;
+            }
+         };
+      }
+      if (this.Valid)
+      {
+
+      }
+
+
+
+      this.Initialize = function () {
+         if (!this.Valid) return;
+
+      };
+   }
+}
+
 function Initialize()
 {
    UpdateHue();
-   UpdateLightness();
-   UpdateSaturation();
+   UpdatePercentage(false);
+   UpdatePercentage(true);
    UpdateColorPalette(0);
+   ResetPlayButtons();
    console.log(new Date(Date.now()).toUTCString());
    var element = document.getElementById(PaletteCursorId);
 
    document.addEventListener('dragstart', CursorDragStart);
    document.addEventListener('dragend', EndCursorDrag);
    document.addEventListener('dragover', CursorDragOver);
+}
+
+function BlurPlayButton(id)
+{
+   var element = document.getElementById(id);
+   
+   switch (id)
+   {
+      case HueInputId: element.value = DefaultHue; UpdateHue(); break;
+      case SaturationInputId: element.value = DefaultSaturation; UpdatePercentage(true); break;
+      case LightnessInputId: element.value = DefaultLightness; UpdatePercentage(false); break;
+   }
 }
 
 function GetNumericInput(id, percent, fraction)
@@ -48,10 +131,8 @@ function GetNumericInput(id, percent, fraction)
          }
       }
       else {
-         if (percent) value = SanitizePercent(element.value, fraction);
-         else value = SanitizeDegrees(element.value, fraction);
-         var val = percent ? SanitizePercent(element.value, false) : SanitizeDegrees(element.value, false);
-         if (element.value != val) element.value = val;
+         value = SanitizeNumberInput(element.value, percent);
+         if (element.value != value) element.value = value;
       }
       return [element, value];
    }
@@ -85,9 +166,9 @@ function IncrementInput(id, increment, percent)
       var inc = id == HueInputId ? PlayBtnDegreeIncrement : PlayBtnPercentIncrement;
       if (increment) val += inc;
       else val -= inc;
-      val = SanitizeNumberInput(val, percent, false);
+      val = SanitizeNumberInput(val, percent);
       var msg;
-      if (!CONSOLE_DEBUG) {
+      if (CONSOLE_DEBUG) {
          msg = arguments.callee.name + '(' + id + ') ' + ni[1] + '% value: ' + val;
          console.log(msg);
       }
@@ -95,10 +176,9 @@ function IncrementInput(id, increment, percent)
       switch (id)
       {
          case HueInputId: UpdateHue(); break;
-         case SaturationInputId: UpdateSaturation(); break;
-         case LightnessInputId: UpdateLightness(); break;
+         case SaturationInputId: UpdatePercentage(true); break;
+         case LightnessInputId: UpdatePercentage(false); break;
       }
-         // UpdateHue();
    }
    catch (e) { LogError(arguments, e); }
 }
@@ -108,7 +188,7 @@ function UpdateColorPalette(hueInDegrees)
    try {
       var canvas = document.getElementById(ColorPaletteId);
       var ctx = canvas.getContext('2d');
-      hueInDegrees = SanitizeDegrees(hueInDegrees, false);
+      hueInDegrees = SanitizeNumberInput(hueInDegrees, false);
       if (CONSOLE_DEBUG) console.log(arguments.callee.name +
          '(' + hueInDegrees + '°)' +
          canvas.clientWidth + ' x ' + canvas.clientHeight);
@@ -145,47 +225,47 @@ function UpdateHue()
          console.log(msg + ' palette: ' + offset[0] + ' x ' + offset[1]);
       var newy = offset[1] + 1;/* (palette.clientHeight >> 1) - nudge; */
       cursor.style.borderColor =
-         StyleRgbFromHue(SanitizeDegrees(ni[1] + 180, false));
+         StyleRgbFromHue(SanitizeNumberInput(ni[1] + 180, false));
       if (CONSOLE_DEBUG) console.log(msg +
          ' palette: ' + offset[0] + ' x ' + offset[1] +
          ' cursor: ' + newx + ' x ' + newy +
          ' border: ' + cursor.style.borderColor);
       cursor.style.left = newx + 'px';
       cursor.style.top = newy + 'px';
+      return true;
    }
    catch (e) { LogError(arguments, e); }
+   return false;
 }
 
 function UpdateLightness()
 {
+   return UpdatePercentage(false);
+}
+
+function UpdatePercentage(saturation)
+{
    try {
-      var ni = GetNumericInput(LightnessInputId, true, false);
-      SelectedLightness = ni[1];
+      var ni = GetNumericInput(saturation ? SaturationInputId : LightnessInputId, true, false);
+      if (saturation) SelectedSaturation = ni[1];
+      else SelectedLightness = ni[1];
       var color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
       var msg;
-      if (CONSOLE_DEBUG) {
-         msg = arguments.callee.name + '(' + ni[1] + '%) value: ' + ni[0].value + ' color: ' + color;
+      if (!CONSOLE_DEBUG) {
+         msg = arguments.callee.name + '(' + ni[1] + '%) ' +
+            (saturation ? 'saturation' : 'lightness') +
+            ' value: ' + ni[0].value + ' color: ' + color;
          console.log(msg);
       }
-      UpdateHue();
+      return UpdateHue();
    }
    catch (e) { LogError(arguments, e); }
+   return false;
 }
 
 function UpdateSaturation()
 {
-   try {
-      var ni = GetNumericInput(SaturationInputId, true, false);
-      SelectedSaturation = ni[1];
-      color = StyleRgbFromHsl(SelectedHue, SelectedSaturation/100, SelectedLightness/100);
-      var msg;
-      if (CONSOLE_DEBUG) {
-         msg = arguments.callee.name + '(' + ni[1] + '%) value: ' + (ni[0].value * 2.5) + ' color: ' + color ;
-         console.log(msg);
-      }
-      UpdateHue();
-   }
-   catch (e) { LogError(arguments, e); }
+   return UpdatePercentage(true);
 }
 
 function LogError(args, e)
@@ -199,10 +279,17 @@ function Reset(id)
    var element = document.getElementById(id);
    switch (id)
    {
-      case HueInputId: element.value = 0; UpdateHue(); break;
-      case SaturationInputId: element.value = 100; UpdateSaturation(); break;
-      case LightnessInputId: element.value = 50; UpdateLightness(); break;
+      case HueInputId: element.value = DefaultHue; UpdateHue(); break;
+      case SaturationInputId: element.value = DefaultSaturation; UpdatePercentage(true); break;
+      case LightnessInputId: element.value = DefaultLightness; UpdatePercentage(false); break;
    }
+}
+
+function ResetPlayButtons()
+{
+   Reset(HueInputId);
+   Reset(SaturationInputId);
+   Reset(LightnessInputId);
 }
 
 function ResetToStop(id, end)
@@ -211,33 +298,34 @@ function ResetToStop(id, end)
    switch (id)
    {
       case HueInputId: element.value = end ? 359 : 0; UpdateHue(); break;
-      case SaturationInputId: element.value = end ? 1000 : 0; UpdateSaturation(); break;
-      case LightnessInputId: element.value = end ? 100 : 0; UpdateLightness(); break;
+      case SaturationInputId: element.value = end ? 100 : 0; UpdatePercentage(true); break;
+      case LightnessInputId: element.value = end ? 100 : 0; UpdatePercentage(false); break;
    }
 }
 
-function SanitizeNumberInput(value, percent, fraction)
+function SanitizeDegreeInput(value)
 {
-   var modulus = percent ? 100 : 360;
-   var result = Math.abs(value) % modulus;
-   if (value < 0) result = modulus - result;
-   return fraction ? result/modulus : result;
+   if (value.toString().indexOf('.') > -1) value = Math.round(value);
+   var result = Math.abs(value) % 360;
+   if (value == 360) return 0;
+   switch (result) {
+      case -1: return 359;
+      case 360: return 360;
+   }
+   return value >= 0 ? result : 360 - result;
 }
 
-function SanitizeDegrees(degree, fraction)
+function SanitizeNumberInput(value, percent)
 {
-   var mod = Math.abs(degree) % 360;
-   // if (degree == 360) mod = degree; else
-   if (degree < 0) mod = 360 - mod;
-   return fraction ? mod/360 : mod;
+   return percent ? SanitizePercentInput(value) : SanitizeDegreeInput(value);
 }
 
-function SanitizePercent(percent, fraction)
+function SanitizePercentInput(value)
 {
-   var mod = Math.abs(percent) % 100;
-   if (percent == 100) mod = percent;
-   else if (percent < 0) mod = 100 - mod;
-   return fraction ? mod/100 : mod;
+   if (value.toString().indexOf('.') > -1) value = Math.round(value);
+   if (value > 100) return 0;
+   if (value < 0) return 100;
+   return value;
 }
 
 function EndCursorDrag(event)
@@ -259,9 +347,17 @@ function CursorDragStart(event)
    if (CONSOLE_DEBUG) console.log(arguments.callee.name + ' left: ' + event.offsetX);
 }
 
+function SanitizeHue(value)
+{
+   var result = Math.abs(value) % 360;
+   if (value < 0) result = 360 - result;
+   return result == 360 ? 100 : result / 360;
+}
+
+
 function StyleRgbFromHsl(h, s, l)
 {
-   var rgb = hslToRgb(SanitizeDegrees(h, true),s,l);
+   var rgb = hslToRgb(SanitizeHue(h), s, l);
    var val = "#";
    for (var i = 0; i < rgb.length; i++)
       val += rgb[i] < 16 ? '0' + rgb[i].toString(16) : rgb[i].toString(16);
@@ -272,7 +368,7 @@ function StyleRgbFromHsl(h, s, l)
 
 function StyleRgbFromHue(hueInDegrees)
 {
-   var rgb = hslToRgb(SanitizeDegrees(hueInDegrees, true), 1.0, 0.5);
+   var rgb = hslToRgb(SanitizeHue(hueInDegrees), 1.0, 0.5);
    var decl = "#";
    for (var i = 0; i < rgb.length; i++)
       decl += rgb[i] < 16 ? '0' + rgb[i].toString(16) : rgb[i].toString(16);

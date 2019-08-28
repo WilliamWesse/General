@@ -15,7 +15,7 @@
 <body onload="Initialize();" onresize="UpdateHue();">
    <section id="burgers">
       <h1 tabindex="1">Hamburgers
-         <span style="font-size: 75%; font-weight: 500;"> - Hover &amp; click <i>(has transitions).</i></span></h1>
+         <span style="font-size: 75%; font-weight: 500;"> - Hover &amp; click <i>(has transitions)</i>.</span></h1>
       <ul class="mono-sans-serif">
          <li><a id="burger1" class="burger" tabindex="2"><div></div><div></div><div></div></a><p>Plain with drop-shadow.</p></li>
          <li><a id="burger2" class="burger" tabindex="3"><div></div><div></div><div></div></a><p>Plain with background.</p></li>
@@ -34,8 +34,8 @@
          <button class="playButton" onclick="IncrementInput('hueInputId', true, false);">&#9205;</button>
          <button class="playButton" onclick="ResetToStop('hueInputId', true);">&#9197;</button> &#8226;
          <input type="number" placeholder="Degrees" id="hueInputId"
-            name="hueInputId" min="0" max="360" step="1" value="0"
-            class="numinput" onchange="UpdateHue();">
+            name="hueInputId" min="-1" max="360" step="1" value="0" class="numinput"
+            onchange="UpdateHue();" onblur="BlurPlayButton('hueInputId');">
          <span class="inputLabelSpan">&nbsp;Hue <b>&deg;</b></span>
       </div>
       <div>
@@ -45,8 +45,8 @@
          <button class="playButton" onclick="IncrementInput('saturationInputId', true, false);">&#9205;</button>
          <button class="playButton" onclick="ResetToStop('saturationInputId', true);" >&#9197;</button> &#8226;
          <input type="number" placeholder="Percent" id="saturationInputId"
-            name="saturationInputId" min="0" max="100" step="1" value="100"
-            class="numinput" onchange="UpdateSaturation();">
+            name="saturationInputId" min="-1" max="101" step="1" value="100" class="numinput"
+            onchange="UpdatePercentage(true);" onblur="BlurPlayButton('saturationInputId');">
          <span class="inputLabelSpan">&nbsp;Saturation %</span>
       </div>
       <div>
@@ -56,8 +56,8 @@
          <button class="playButton" onclick="IncrementInput('lightnessInputId', true, false);">&#9205;</button>
          <button class="playButton" onclick="ResetToStop('lightnessInputId', true);">&#9197;</button> &#8226;
          <input type="number" placeholder="Percent" id="lightnessInputId"
-            name="lightnessInputId" min="0" max="100" step="1" value="50"
-            class="numinput" onchange="UpdateLightness();">
+            name="lightnessInputId" min="-1" max="101" step="1" value="50" class="numinput"
+            onchange="UpdatePercentage(false);"  onblur="BlurPlayButton('lightnessInputId');">
          <span class="inputLabelSpan">&nbsp;Lightness %</span>
       </div>
       <a id="paletteCursorId" class="colorCursor" href="#"></a>
