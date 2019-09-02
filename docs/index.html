@@ -9,6 +9,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
    <link rel="stylesheet" href="css/index.css">
+   <script src="script/colors.js"></script>
    <script src="script/index.js"></script>
    <title>General Topics</title>
 </head>
@@ -25,44 +26,44 @@
       </ul>
    </section>
    <br>
-   <section id="colors" tabindex="6">
-      <h1>Color: <div id="colorDivId" class="colorDiv"></div></h1>
+   <section id="colors" tabindex="10">
+      <h1><span id="colorTitle" tabindex="">Color: </span><div id="colorDivId" class="colorDiv"></div></h1>
       <div>
-         <button class="playButton" onclick="Reset('hueInputId');"><b>&#8630;</b></button> &#8226;
-         <button class="playButton" onclick="ResetToStop('hueInputId', false);">&#9198;</button>
-         <button class="playButton" onclick="IncrementInput('hueInputId', false, false);">&#9204;</button>
-         <button class="playButton" onclick="IncrementInput('hueInputId', true, false);">&#9205;</button>
-         <button class="playButton" onclick="ResetToStop('hueInputId', true);">&#9197;</button> &#8226;
-         <input type="number" placeholder="Degrees" id="hueInputId"
+         <button class="playButton" tabindex="11" onclick="Reset('hueInputId');" title="Default (0)"><b>&#8630;</b></button> &#8226;
+         <button class="playButton" tabindex="12" onclick="ResetToStop('hueInputId', false);" title="Zero">&#9198;</button>
+         <button class="playButton" tabindex="13" onclick="IncrementInput('hueInputId', false, false);" title="-15">&#9204;</button>
+         <button class="playButton" tabindex="14" onclick="IncrementInput('hueInputId', true, false);" title="+15">&#9205;</button>
+         <button class="playButton" tabindex="15" onclick="ResetToStop('hueInputId', true);" title="359">&#9197;</button> &#8226;
+         <input type="number" placeholder="Degrees" id="hueInputId" tabindex="16"
             name="hueInputId" min="-1" max="360" step="1" value="0" class="numinput"
             onchange="UpdateHue();" onblur="BlurPlayButton('hueInputId');">
          <span class="inputLabelSpan">&nbsp;Hue <b>&deg;</b></span>
       </div>
       <div>
-         <button class="playButton" onclick="Reset('saturationInputId');"><b>&#8630;</b></button> &#8226;
-         <button class="playButton" onclick="ResetToStop('saturationInputId', false);">&#9198;</button>
-         <button class="playButton" onclick="IncrementInput('saturationInputId', false, false);">&#9204;</button>
-         <button class="playButton" onclick="IncrementInput('saturationInputId', true, false);">&#9205;</button>
-         <button class="playButton" onclick="ResetToStop('saturationInputId', true);" >&#9197;</button> &#8226;
-         <input type="number" placeholder="Percent" id="saturationInputId"
+         <button class="playButton" tabindex="17" onclick="Reset('saturationInputId');" title="Default (100)"><b>&#8630;</b></button> &#8226;
+         <button class="playButton" tabindex="18" onclick="ResetToStop('saturationInputId', false);" title="Zero">&#9198;</button>
+         <button class="playButton" tabindex="19" onclick="IncrementInput('saturationInputId', false, false);" title="-5">&#9204;</button>
+         <button class="playButton" tabindex="20" onclick="IncrementInput('saturationInputId', true, false);" title="+5">&#9205;</button>
+         <button class="playButton" tabindex="21" onclick="ResetToStop('saturationInputId', true);" title="100">&#9197;</button> &#8226;
+         <input type="number" placeholder="Percent" id="saturationInputId" tabindex="22"
             name="saturationInputId" min="-1" max="101" step="1" value="100" class="numinput"
             onchange="UpdatePercentage(true);" onblur="BlurPlayButton('saturationInputId');">
          <span class="inputLabelSpan">&nbsp;Saturation %</span>
       </div>
       <div>
-         <button class="playButton" onclick="Reset('lightnessInputId');"><b>&#8630;</b></button> &#8226;
-         <button class="playButton" onclick="ResetToStop('lightnessInputId', false);">&#9198;</button>
-         <button class="playButton" onclick="IncrementInput('lightnessInputId', false, false);">&#9204;</button>
-         <button class="playButton" onclick="IncrementInput('lightnessInputId', true, false);">&#9205;</button>
-         <button class="playButton" onclick="ResetToStop('lightnessInputId', true);">&#9197;</button> &#8226;
-         <input type="number" placeholder="Percent" id="lightnessInputId"
+         <button class="playButton" tabindex="23" onclick="Reset('lightnessInputId');" title="Default (50)"><b>&#8630;</b></button> &#8226;
+         <button class="playButton" tabindex="24" onclick="ResetToStop('lightnessInputId', false);" title="Zero">&#9198;</button>
+         <button class="playButton" tabindex="25" onclick="IncrementInput('lightnessInputId', false, false);" title="-5">&#9204;</button>
+         <button class="playButton" tabindex="26" onclick="IncrementInput('lightnessInputId', true, false);" title="+5">&#9205;</button>
+         <button class="playButton" tabindex="27" onclick="ResetToStop('lightnessInputId', true);" title="100">&#9197;</button> &#8226;
+         <input type="number" placeholder="Percent" id="lightnessInputId" tabindex="28"
             name="lightnessInputId" min="-1" max="101" step="1" value="50" class="numinput"
             onchange="UpdatePercentage(false);"  onblur="BlurPlayButton('lightnessInputId');">
          <span class="inputLabelSpan">&nbsp;Lightness %</span>
       </div>
-      <a id="paletteCursorId" class="colorCursor" href="#"></a>
-      <canvas width="360px" height="21.3333px" id="colorPaletteId" class="colorCanvas"></canvas>
+      <a id="paletteCursorId" class="colorCursor" href="#" draggable="true" tabindex="29" title="Drag to the desired color."></a>
+      <canvas width="360px" height="21.3333px" id="colorPaletteId" class="colorCanvas san-serif" title="Click to select color."></canvas>
    </section>
-   <p>Last updated: Tue, 20 Aug 2019 11:26:30 GMT</p>
+   <p id="lastUpdated" tabindex="30">Last updated: Mon, 02 Sep 2019 15:00:33 GMT</p>
 </body>
 </html> 
