@@ -104,7 +104,7 @@ function CursorDragStart(event)
 
    //requestPointerLock()
    // var after = element.querySelector(':after');
-   // console.log(arguments.callee.name + ' After: ' + (after == null ? 'FAIL' : after));
+   // console.log(arguments.callee.name + ' After: ' + (after === null ? 'FAIL' : after));
    LogCanvasEvent(arguments, event);
 }
 
@@ -163,7 +163,7 @@ function GetNumericInput(id, percent, fraction)
    var value = 0;
    try {
       element = document.getElementById(id);
-      if (element == null || element.tagName.toLowerCase() != 'input' ||
+      if (element === null || element.tagName.toLowerCase() != 'input' ||
          element.type != 'number') {
          if (CONSOLE_DEBUG>1) {
             var msg = arguments.callee.name + '(' + id + ',' +
@@ -209,7 +209,7 @@ function IncrementInput(id, increment, percent)
    try {
       var ni = GetNumericInput(id, percent, false);
       var val = ni[1];
-      var inc = id == HueInputId ? PlayBtnDegreeIncrement : PlayBtnPercentIncrement;
+      var inc = id === HueInputId ? PlayBtnDegreeIncrement : PlayBtnPercentIncrement;
       if (increment) val += inc;
       else val -= inc;
       val = SanitizeNumberInput(val, percent);
@@ -372,11 +372,8 @@ function SanitizeDegreeInput(value)
 {
    if (value.toString().indexOf('.') > -1) value = Math.round(value);
    var result = Math.abs(value) % 360;
-   if (value == 360) return 0;
-   switch (result) {
-      case -1: return 359;
-      case 360: return 360;
-   }
+   if (result < 0) return 359;
+   if (result > 359) return 0;
    return value >= 0 ? result : 360 - result;
 }
 
@@ -397,7 +394,7 @@ function SanitizeHue(value)
 {
    var result = Math.abs(value) % 360;
    if (value < 0) result = 360 - result;
-   return result == 360 ? 100 : result / 360;
+   return result === 360 ? 100 : result / 360;
 }
 
 
@@ -458,7 +455,7 @@ function hsl2rgb(h, m1, m2) {
 function hslToRgb(h, s, l){
    var r, g, b;
 
-   if(s == 0){
+   if(s === 0){
       r = g = b = l; // achromatic
    }else{
       var hue2rgb = function hue2rgb(p, q, t){
