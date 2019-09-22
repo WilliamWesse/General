@@ -146,7 +146,7 @@ function Initialize()
 function BlurPlayButton(id)
 {
    var element = document.getElementById(id);
-   
+
    switch (id)
    {
       case HueInputId: element.value = DefaultHue; UpdateHue(); break;
@@ -368,11 +368,12 @@ function ResetToStop(id, end)
    }
 }
 
-function SanitizeDegreeInput(value)
+function SanitizeDegreeInput(input)
 {
-   if (value.toString().indexOf('.') > -1) value = Math.round(value);
+   var value = Number.parseFloat(input);
+   if (Number.isNaN(value)) return 0;
+   value = Math.round(value);
    var result = Math.abs(value) % 360;
-   if (result < 0) return 359;
    if (result > 359) return 0;
    return value >= 0 ? result : 360 - result;
 }
@@ -382,12 +383,13 @@ function SanitizeNumberInput(value, percent)
    return percent ? SanitizePercentInput(value) : SanitizeDegreeInput(value);
 }
 
-function SanitizePercentInput(value)
+function SanitizePercentInput(input)
 {
-   if (value.toString().indexOf('.') > -1) value = Math.round(value);
+   var value = Number.parseFloat(input);
+   if (Number.isNaN(value)) return 0;
+   value = Math.round(value);
    if (value > 100) return 0;
-   if (value < 0) return 100;
-   return value;
+   return value < 0 ? 100 : value;
 }
 
 function SanitizeHue(value)
@@ -422,55 +424,44 @@ function StyleRgbFromHue(hueInDegrees)
 }
 
 /**
- * Color spaces! RGB, HSL, Cubehelix, Lab (CIELAB) and HCL (CIELCH).
- * https://github.com/d3/d3-color/tree/v1.2.3
- * src\color.js(333-342)
- * https://observablehq.com/collection/@d3/d3-color
- *
- * @param {*} h TODO
- * @param {*} m1 TODO
- * @param {*} m2 TODO
- */
-/* From FvD 13.37, CSS Color Module Level 3 */
-function hsl2rgb(h, m1, m2) {
-   return (h < 60 ? m1 + (m2 - m1) * h / 60
-      : h < 180 ? m2
-      : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60
-      : m1) * 255;
-}
-
+ * function hslToRgb(h, s, l)
+ * https://gist.github.com/mjackson/5311256#file-color-conversion-algorithms-js
+*/
 /**
- * HSL to RGB color conversion [closed]
- * https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes h, s, and l are contained in the set [0, 1] and
  * returns r, g, and b in the set [0, 255].
  *
- * @param   {number}  h       The hue
- * @param   {number}  s       The saturation
- * @param   {number}  l       The lightness
- * @return  {Array}           The RGB representation
+ * @param   Number  h       The hue
+ * @param   Number  s       The saturation
+ * @param   Number  l       The lightness
+ * @return  Array           The RGB representation
  */
-function hslToRgb(h, s, l){
+function hslToRgb(h, s, l) {
    var r, g, b;
 
-   if(s === 0){
-      r = g = b = l; // achromatic
-   }else{
-      var hue2rgb = function hue2rgb(p, q, t){
-         if(t < 0) t += 1;
-         if(t > 1) t -= 1;
-         if(t < 1/6) return p + (q - p) * 6 * t;
-         if(t < 1/2) return q;
-         if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+   if (s == 0) {
+     r = g = b = l; // achromatic
+   } else {
+/* jshint ignore:start */
+      function hue2rgb(p, q, t) {
+         if (t < 0) t += 1;
+         if (t > 1) t -= 1;
+         if (t < 1/6) return p + (q - p) * 6 * t;
+         if (t < 1/2) return q;
+         if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
          return p;
-      };
+     }
+/* jshint ignore:end */
       var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
       var p = 2 * l - q;
+
       r = hue2rgb(p, q, h + 1/3);
       g = hue2rgb(p, q, h);
       b = hue2rgb(p, q, h - 1/3);
    }
+
+   // return [ r * 255, g * 255, b * 255 ];
    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
