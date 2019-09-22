@@ -1,0 +1,12 @@
+{
+   "liveServer.settings.port": 4500,
+   "liveServer.settings.root": "/src",
+   "liveServer.settings.CustomBrowser" : "firefox",
+   "liveServer.settings.AdvanceCustomBrowserCmdLine": "C:\\Program Files\\Firefox Nightly\\firefox.exe",
+   "liveServer.settings.NoBrowser" : false,
+   "liveServer.settings.ignoreFiles" : [
+      ".vscode/**",
+      "**/*.scss",
+      "**/*.sass"
+   ]
+}

@@ -1,7 +1,7 @@
 
 enum HslAxis { H = 0, S = 1, L = 2, A = 3 }
 enum RgbAxis { R = 0, G = 1, B = 2, A = 3 }
-enum HslDefaults { H = 0, S = 100, L = 50, A = 100 }
+enum HslNorm { H = 0, S = 100, L = 50, A = 100 }
 enum HslFmt {
    hsl,   // 'hsl(',
    hsla,  // 'hsla('
@@ -9,7 +9,7 @@ enum HslFmt {
    rgba,  // 'rgba('
    style, // '#',
 }
-enum CtrlTagType {
+enum CtrlTags {
    none,
    button,
    input
@@ -72,14 +72,14 @@ const GetCtrlType: Function = (type: string): CtrlType => {
    }
    return CtrlType.none;
 };
-const GetCtrlTagType: Function = (tag: string): CtrlTagType => {
-   if (tag == null || tag.length == 0) return CtrlTagType.none;
+const GetCtrlTagType: Function = (tag: string): CtrlTags => {
+   if (tag == null || tag.length == 0) return CtrlTags.none;
    switch (tag.toLowerCase())
    {
-      case 'button': return CtrlTagType.button;
-      case 'input': return CtrlTagType.input;
+      case 'button': return CtrlTags.button;
+      case 'input': return CtrlTags.input;
    }
-   return CtrlTagType.none;
+   return CtrlTags.none;
 };
 
 /**
@@ -168,7 +168,7 @@ class HslAxisCtrl {
       this._ctlType = GetCtrlType(ctrl.getAttribute('type'));
       switch (this._tagType)
       {
-         case CtrlTagType.input:
+         case CtrlTags.input:
             switch (this._ctlType)
             {
                case CtrlType.number: this._valueCtrl = ctrl; break;
@@ -179,7 +179,7 @@ class HslAxisCtrl {
                default: isValid = false; break;
             }
             break;
-         case CtrlTagType.button:
+         case CtrlTags.button:
             switch (this._ctlType)
             {
                case CtrlType.button:
@@ -196,9 +196,7 @@ class HslAxisCtrl {
          return;
       }
       if (this.IsPercent) {
-
          // this.Control.onclick = null;
-
          // let OnClick: Function = (event: Event) => {
          //    this._value = this.Controller.SanitizePercentInput(this.Control.nodeValue);
          // };
@@ -212,12 +210,12 @@ class HslAxisCtrl {
    protected _rangeCtrl: HTMLElement = null; // input type="range"
 
    protected _controller: HslAxisController;
-   protected _default: number = HslDefaults.S;
+   protected _default: number = HslNorm.S;
    protected _id: string;
    protected _isInt: boolean = true;
    protected _valid: boolean = false;
    protected _value: number = 0;
-   protected _tagType: CtrlTagType = CtrlTagType.none;
+   protected _tagType: CtrlTags = CtrlTags.none;
    protected _ctlType: CtrlType = CtrlType.none;
 }
 
@@ -225,10 +223,10 @@ class HslAxisController {
 
    constructor(id: string)
    {
-      this._axes[HslAxis.H] = new HslAxisCtrl(this, id + 'H', HslAxis.H, HslDefaults.H);
-      this._axes[HslAxis.S] = new HslAxisCtrl(this, id + 'S', HslAxis.S, HslDefaults.S);
-      this._axes[HslAxis.L] = new HslAxisCtrl(this, id + 'L', HslAxis.L, HslDefaults.L);
-      this._axes[HslAxis.A] = new HslAxisCtrl(this, id + 'A', HslAxis.A, HslDefaults.A);
+      this._axes[HslAxis.H] = new HslAxisCtrl(this, id + 'H', HslAxis.H, HslNorm.H);
+      this._axes[HslAxis.S] = new HslAxisCtrl(this, id + 'S', HslAxis.S, HslNorm.S);
+      this._axes[HslAxis.L] = new HslAxisCtrl(this, id + 'L', HslAxis.L, HslNorm.L);
+      this._axes[HslAxis.A] = new HslAxisCtrl(this, id + 'A', HslAxis.A, HslNorm.A);
    }
 
    get H():HslAxisCtrl { return this._axes[HslAxis.H]; };
@@ -352,7 +350,7 @@ class HslAxisController {
             txt = element.toString(16);
             fmts[HslFmt.style] += element < 16 ? '0' + txt : txt;
          }
-         else { // transfer: Alpha, finalize: hsl, rgb
+         else { // transfer: alpha, finalize: hsl, rgb
             fmts[HslFmt.rgb] += ')';
             fmts[HslFmt.hsl] += ')';
             fmts[HslFmt.rgba] += sep + a;
@@ -378,13 +376,9 @@ class HslAxisController {
    }
 
    protected _axes: HslAxisCtrl[] = [null, null, null, null];
-
-   // protected _h: HslAxisCtrl;
-   // protected _s: HslAxisCtrl;
-   // protected _l: HslAxisCtrl;
-   // protected _a: HslAxisCtrl;
    protected _dirty: boolean = true;
    protected _m: HslMeta;
+
    protected _meta: Function = (): HslMeta => {
       if (this._dirty) {
          this._m = this._CreateMeta();
@@ -392,9 +386,9 @@ class HslAxisController {
       }
       return this._m;
    };
+
    protected _valid: Function = (): boolean => {
-      this._axes.forEach ((element) => {
-         if (!element.Valid) return false; });
+      this._axes.forEach ((element) => { if (!element.Valid) return false; });
       return true;
    };
 }
